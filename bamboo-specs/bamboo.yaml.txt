@@ -1,0 +1,64 @@
+---
+version: 2
+plan:
+  project-key: QAT
+  key: PRO
+  name: Production
+  description: download the code from git
+stages:
+- Default Stage:
+    manual: false
+    final: false
+    jobs:
+    - Default Job
+Default Job:
+  key: JOB1
+  tasks:
+  - checkout:
+      force-clean-build: 'false'
+      description: Checkout Default Repository
+  - maven:
+      executable: maven
+      jdk: JDK 1.8
+      goal: package
+      tests: 'true'
+      description: Build the code
+  - any-task:
+      plugin-key: com.atlassian.bamboo.plugins.tomcat.bamboo-tomcat-plugin:deployAppTask
+      configuration:
+        tomcatUrl: http://172.31.36.166:8080/manager/
+        warFilePath: webapp/target/webapp.war
+        tomcatUsername: tomcat
+        encTomcatPassword: fnBJAm+Eizw4tDn0FAlnYA==
+        appContext: /testapp
+      description: Deploy the war
+  artifact-subscriptions: []
+repositories:
+- Git clone:
+    scope: global
+triggers:
+- polling:
+    period: '180'
+branches:
+  create: manually
+  delete: never
+  link-to-jira: true
+notifications: []
+labels: []
+other:
+  concurrent-build-plugin: system-default
+---
+version: 2
+plan:
+  key: QAT-PRO
+plan-permissions:
+- users:
+  - ubuntu
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+  - view_configuration
+...
