@@ -11,6 +11,8 @@ stages:
     final: false
     jobs:
     - Default Job
+git:
+- url: "https://github.com/shravants/Test1.git"
 Default Job:
   key: JOB1
   tasks:
